@@ -2,6 +2,7 @@ import re
 from convert_to_float import convert_to_float
 import matplotlib.pyplot as plt
 import numpy as np
+from pathlib import Path
 
 
 def parese_text(text):
@@ -51,11 +52,23 @@ def parse_month(path, end) -> float:
     return end + sum(x * -1 for x in float_entrys)
 
 
+def get_pahts():
+    FOLDER_PATH = Path("abrechnung/")
+    files = [f.name for f in FOLDER_PATH.iterdir() if f.is_file()
+             and not f.name.endswith(".pdf")]
+    files.remove(".gitkeep")
+    files = sorted(files)
+    files = [f"{FOLDER_PATH.name}/{x}" for x in files]
+    return files
+
+
 def main():
     END = 0
-    new_end = parse_month("abrechnung/maerz_25.txt", END)
-    print(new_end)
-    parse_month("abrechnung/februar_25.txt", new_end)
+    paths = list(reversed(get_pahts()))
+    new_end = parse_month(paths[0], END)
+    for path in paths[1:]:
+        print(new_end)
+        new_end = parse_month(path, new_end)
 
 
 if __name__ == "__main__":
